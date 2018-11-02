@@ -1,0 +1,73 @@
+#!/bin/bash
+source /opt/app-root/etc/generate_container_user
+
+set -e
+
+function is_gunicorn_installed() {
+  hash gunicorn &>/dev/null
+}
+
+# Guess the number of workers according to the number of cores
+function get_default_web_concurrency() {
+  limit_vars=$(cgroup-limits)
+  local $limit_vars
+  if [ -z "${NUMBER_OF_CORES:-}" ]; then
+    echo 1
+    return
+  fi
+
+  local max=$((NUMBER_OF_CORES*2))
+  # Require at least 43 MiB and additional 10 MiB for every worker
+  local default=$(((${MEMORY_LIMIT_IN_BYTES:-MAX_MEMORY_LIMIT_IN_BYTES}/1024/1024 - 43) / 10))
+  default=$((default > max ? max : default))
+  default=$((default < 1 ? 1 : default))
+  echo $default
+}
+
+app_script_check="${APP_SCRIPT-}"
+APP_SCRIPT="${APP_SCRIPT:-app.sh}"
+APP_ARGS="${APP_ARGS:-}"
+if [[ -f "$APP_SCRIPT" ]]; then
+  echo "---> Running application from script ($APP_SCRIPT) ..."
+  if [[ "$APP_SCRIPT" != /* ]]; then
+    APP_SCRIPT="./$APP_SCRIPT"
+  fi
+  exec "$APP_SCRIPT" $APP_ARGS
+else
+  test -n "$app_script_check" && (>&2 echo "ERROR: file '$app_script_check' not found.") && exit 1
+fi
+
+app_file_check="${APP_FILE-}"
+APP_FILE="${APP_FILE:-app.py}"
+if [[ -f "$APP_FILE" ]]; then
+  echo "---> Running application from Python script ($APP_FILE) ..."
+  exec python "$APP_FILE"
+else
+  test -n "$app_file_check" && (>&2 echo "ERROR: file '$app_file_check' not found.") && exit 1
+fi
+
+APP_HOME=${APP_HOME:-.}
+# Look for 'manage.py' in the directory specified by APP_HOME, or the current direcotry
+
+if is_gunicorn_installed; then
+  if [[ -z "$APP_MODULE" ]]; then
+    # Look only in the directory specified by APP_HOME, or the current directory
+    # replace all "/" with ".", remove leading "." and ".py" suffix
+    APP_MODULE=$(find $APP_HOME -maxdepth 1 -type f -name 'wsgi.py' | sed 's:/:.:g;s:^\.\+::;s:\.py$::')
+  fi
+
+  if [[ -z "$APP_MODULE" && -f setup.py ]]; then
+    APP_MODULE="$(python setup.py --name)"
+  fi
+
+  if [[ "$APP_MODULE" ]]; then
+    export WEB_CONCURRENCY=${WEB_CONCURRENCY:-$(get_default_web_concurrency)}
+
+    echo "---> Serving application with gunicorn ($APP_MODULE) ..."
+    exec gunicorn "$APP_MODULE" --bind=0.0.0.0:8080 --access-logfile=- --config "$APP_CONFIG"
+  fi
+fi
+
+>&2 echo "ERROR: don't know how to run your application."
+>&2 echo "Please set either APP_MODULE, APP_FILE or APP_SCRIPT environment variables, or create a file 'app.py' to launch your application."
+exit 1

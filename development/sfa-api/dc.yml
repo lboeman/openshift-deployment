@@ -1,0 +1,69 @@
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  annotations: {}
+  generation: 1
+  labels:
+    app: sfa-api
+  name: sfa-api
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    deploymentconfig: sfa-api
+  strategy:
+    activeDeadlineSeconds: 21600
+    resources: {}
+    rollingParams:
+      intervalSeconds: 1
+      maxSurge: 25%
+      maxUnavailable: 25%
+      timeoutSeconds: 600
+      updatePeriodSeconds: 1
+    type: Rolling
+  template:
+    metadata:
+      labels:
+        app: sfa-api
+        deploymentconfig: sfa-api
+    spec:
+      containers:
+      - env:
+        - name: APP_MODULE
+          value: sfa_api:create_app()
+        - name: GUNICORN_CMD_ARGS
+          value: --ssl-version=5 --certfile=/certs/tls.crt --keyfile=/certs/tls.key
+            -k gevent --keep-alive=5 -w 8 --access-logformat '%(h)s %({X-Forwarded-For}i)s %(l)s %(u)s %(t)s "%(r)s" %(s)s %(b)s "%(f)s" "%(a)s"'
+        image: sfa-api:latest
+        imagePullPolicy: Always
+        name: sfa-api
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /certs
+          name: cert-secret
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: cert-secret
+        secret:
+          defaultMode: 420
+          secretName: sfa-api-svc-cert
+  test: false
+  triggers:
+  - imageChangeParams:
+      automatic: true
+      containerNames:
+      - sfa-api
+      from:
+        kind: ImageStreamTag
+        name: sfa-api:latest
+    type: ImageChange
+  - type: ConfigChange
