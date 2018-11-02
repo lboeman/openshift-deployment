@@ -1,0 +1,33 @@
+apiVersion: build.openshift.io/v1
+kind: BuildConfig
+metadata:
+  annotations: {}
+  labels:
+  labels:
+    s2i-image: 'true'
+    base-image: python
+  name: python
+spec:
+  failedBuildsHistoryLimit: 3
+  nodeSelector: null
+  output:
+    to:
+      kind: ImageStreamTag
+      name: python:latest
+  postCommit: {}
+  resources: {}
+  runPolicy: Serial
+  source:
+    git:
+      ref: master
+      uri: https://github.com/solararbiter/openshift-deployment
+    type: Git
+    contextDir: "dockerfiles/python"
+  strategy:
+    dockerStrategy:
+      from:
+        kind: ImageStreamTag
+        name: centos/s2i-base-centos7:latest
+  successfulBuildsHistoryLimit: 3
+  triggers: 
+  - type: ConfigChange

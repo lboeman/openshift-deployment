@@ -1,0 +1,22 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  annotations:
+    haproxy.router.openshift.io/rate-limit-connections: 'true'
+    haproxy.router.openshift.io/rate-limit-connections.rate-http: '500'
+    haproxy.router.openshift.io/hsts_header: 'true'
+  labels:
+    app: sfa-api
+  name: sfa-api
+spec:
+  host: api.dev.solarforecastarbiter.org
+  port:
+    targetPort: 8080-tcp
+  tls:
+    insecureEdgeTerminationPolicy: Redirect
+    termination: reencrypt
+  to:
+    kind: Service
+    name: sfa-api
+    weight: 100
+  wildcardPolicy: None
