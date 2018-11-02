@@ -31,6 +31,4 @@ spec:
   - imageChange:
     type: ImageChange
   - type: ConfigChange
-  - github:
-      secret: 36887c41685bd9ad
-    type: GitHub
+
