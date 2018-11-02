@@ -1,0 +1,29 @@
+#!/bin/bash
+set -e
+
+shopt -s dotglob
+echo "---> Installing application source ..."
+mv /tmp/src/* ./
+
+if [[ ! -z "$UPGRADE_PIP_TO_LATEST" ]]; then
+  echo "---> Upgrading pip to latest version ..."
+  pip install -U pip
+fi
+
+if [[ -f requirements.txt ]]; then
+  echo "---> Installing dependencies ..."
+  pip install -r requirements.txt
+fi
+
+if [[ -f setup.py ]]; then
+  echo "---> Installing application ..."
+  python setup.py install
+fi
+
+# Fix source directory permissions
+fix-permissions ./
+# set permissions for any installed artifacts
+fix-permissions /opt/app-root
+
+# remove pip temporary directory
+rm -rf /tmp/pip_build_default
