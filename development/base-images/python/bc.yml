@@ -26,7 +26,7 @@ spec:
   strategy:
     dockerStrategy:
       from:
-        kind: ImageStreamTag
+        kind: DockerImage
         name: centos/s2i-base-centos7:latest
   successfulBuildsHistoryLimit: 3
   triggers: 
