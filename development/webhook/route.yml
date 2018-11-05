@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Route
+metadata:
+  name: webhook-proxy
+spec:
+  host: {{ route_host }}
+  path: /
+  to:   
+    kind: Service
+    name: webhook-proxy
+  port:
+    targetPort: 8080-tcp
+  tls:
+    termination: reencrypt
+    insecureEdgeTerminationPolicy: Redirect
+

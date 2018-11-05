@@ -1,0 +1,76 @@
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  generation: 1
+  labels:
+    app: webhook-proxy
+  name: webhook-proxy
+spec:
+  replicas: 1
+  selector:
+    app: webhook-proxy
+  strategy:
+    resources: {}
+    rollingParams:
+      intervalSeconds: 1
+      maxSurge: 25%
+      maxUnavailable: 25%
+      timeoutSeconds: 600
+      updatePeriodSeconds: 1
+    type: Rolling
+  template:
+    metadata:
+      labels:
+        app: webhook-proxy
+    spec:
+      containers:
+      - name: webhook-proxy
+        image: nginx:stable-alpine
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        resources: {}
+        livenessProbe:
+          tcpSocket:
+            port: 8080
+          initialDelaySeconds: 1
+          timeoutSeconds: 5
+        readinessProbe:
+          tcpSocket:
+            port: 8080
+          initialDelaySeconds: 1
+          timeoutSeconds: 5
+        terminationMessagePath: /dev/termination-log
+        volumeMounts:
+        - mountPath: /var/run
+          name: run
+        - mountPath: /var/cache/nginx
+          name: cache
+        - mountPath: /certs
+          name: cert-secret
+        - mountPath: /etc/nginx/conf.d/
+          name: nginx-conf
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: run
+        emptyDir: {}
+      - name: cache
+        emptyDir: {}
+      - name: cert-secret
+        secret:
+          defaultMode: 420
+          secretName: webhook-svc-cert
+      - name: nginx-conf
+        configMap:
+          name: webhook-proxy
+          items:
+            - key: nginx-conf
+              path: webhook.conf
+  test: false
+  triggers:
+  - type: ConfigChange
+status: {}
