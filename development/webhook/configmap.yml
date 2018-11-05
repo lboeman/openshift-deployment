@@ -14,7 +14,7 @@ data:
         ssl_protocols TLSv1.2;
         ssl_ciphers HIGH:!aNULL:!MD5;
           
-        location ~* ^/oapi/v1/namespaces/development/buildconfigs/[^/]*/webhooks/[^/]*/github {
+        location ~* ^/apis/build.openshift.io/v1/namespaces/development/buildconfigs/[^/]*/webhooks/[^/]*/github {
             proxy_pass {{ okd_master_url }};
             limit_except POST {
                 deny all;

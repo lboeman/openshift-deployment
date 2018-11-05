@@ -1,0 +1,2 @@
+namespace: development
+github_trigger_secret: !ssm /okd/development/sfa-api/github_trigger_secret
