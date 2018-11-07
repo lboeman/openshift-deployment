@@ -1,0 +1,36 @@
+apiVersion: build.openshift.io/v1
+kind: BuildConfig
+metadata:
+  annotations: {}
+  labels:
+    app: sfa-dash
+  name: sfa-dash
+spec:
+  failedBuildsHistoryLimit: 5
+  nodeSelector: null
+  output:
+    to:
+      kind: ImageStreamTag
+      name: sfa-dash:latest
+  postCommit: {}
+  resources: {}
+  runPolicy: Serial
+  source:
+    git:
+      ref: master
+      uri: https://github.com/SolarArbiter/solarforecastarbiter_dashboard.git
+    type: Git
+  strategy:
+    sourceStrategy:
+      from:
+        kind: ImageStreamTag
+        name: python:latest
+    type: Source
+  triggers:
+  - imageChange:
+    type: ImageChange
+  - type: ConfigChange
+  - type: GitHub
+    github:
+      secretReference:
+        name: sfa-dash-trigger
