@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Route
+metadata:
+  annotations: {}
+  labels:
+    app: sfa-dash
+  name: sfa-dash
+spec:
+  host: dev-dashboard.solarforecastarbiter.org
+  port:
+    targetPort: 8080-tcp
+  tls:
+    insecureEdgeTerminationPolicy: Redirect
+    termination: reencrypt
+  to:
+    kind: Service
+    name: sfa-dash
+  wildcardPolicy: None
