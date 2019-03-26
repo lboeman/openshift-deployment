@@ -34,7 +34,7 @@ spec:
         - name: GUNICORN_CMD_ARGS
           value: --ssl-version=5 --certfile=/certs/tls.crt --keyfile=/certs/tls.key
             -k gevent --keep-alive=5 -w 8 --access-logformat '%(h)s %(l)s %(u)s %(t)s "%(r)s" %(s)s %(b)s "%(f)s" "%(a)s" "%({X-Forwarded-For}i)s"'
-        image: sfa-api:latest
+        image: sfa-api:{{ sfa_api_image_tag | default('latest') }}
         imagePullPolicy: Always
         name: sfa-api
         ports:
@@ -74,6 +74,6 @@ spec:
       - sfa-api
       from:
         kind: ImageStreamTag
-        name: sfa-api:latest
+        name: sfa-api:{{ sfa_api_image_tag | default('latest') }}
     type: ImageChange
   - type: ConfigChange

@@ -9,7 +9,7 @@ metadata:
     app: sfa-api
   name: sfa-api
 spec:
-  host: dev-api.solarforecastarbiter.org
+  host: {{ sfa_api_route }}
   port:
     targetPort: 8080-tcp
   tls:
