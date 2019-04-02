@@ -19,6 +19,9 @@ from jinja2 import Environment, FileSystemLoader, StrictUndefined
 import yaml
 
 
+loader = yaml.Loader
+
+
 def random_digit_string(length):
     return ''.join(
         random.SystemRandom().choice(
@@ -62,8 +65,8 @@ def ssm_constructor(loader, node):
     return resp['Parameter']['Value']
 
 
-yaml.add_constructor('!random', random_constructor)
-yaml.add_constructor('!ssm', ssm_constructor)
+yaml.add_constructor('!random', random_constructor, Loader=loader)
+yaml.add_constructor('!ssm', ssm_constructor, Loader=loader)
 
 
 def make_parser():
@@ -115,14 +118,14 @@ def make_parser():
 def load_vars(path):
     fargs = {}
     if os.path.isfile(path):
-        args = yaml.load(open(path, 'r'))
+        args = yaml.load(open(path, 'r'), Loader=loader)
         if 'include' in args:
             for apath in args['include']:
                 # each succesive includes overwrites previous
                 fargs.update(yaml.load(
                     open(os.path.join(
                         os.path.dirname(path),
-                        apath), 'r')))
+                        apath), 'r'), Loader=loader))
         fargs.update(args)
     return fargs
 
@@ -188,7 +191,7 @@ def diff_config(args):
     templated_configs = render_templates(args)
 
     def make_diff(templated_config, filename):
-        config_yaml = yaml.load(templated_config)
+        config_yaml = yaml.load(templated_config, Loader=loader)
         last_applied = get_last_applied(
             config_yaml['kind'], config_yaml['metadata']['name'],
             args.namespace)
