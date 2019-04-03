@@ -34,6 +34,31 @@ spec:
         - name: GUNICORN_CMD_ARGS
           value: --ssl-version=5 --certfile=/certs/tls.crt --keyfile=/certs/tls.key
             -k gevent --keep-alive=5 -w 8 --access-logformat '%(h)s %(l)s %(u)s %(t)s "%(r)s" %(s)s %(b)s "%(f)s" "%(a)s" "%({X-Forwarded-For}i)s"'
+        - name: MYSQL_HOST
+          valueFrom:
+            secretKeyRef:
+              key: mysql-host
+              name: sfa-api-mysql-config
+        - name: MYSQL_USER
+          valueFrom:
+            secretKeyRef:
+              key: mysql-user
+              name: sfa-api-mysql-config
+        - name: MYSQL_PORT
+          valueFrom:
+            secretKeyRef:
+              key: mysql-port
+              name: sfa-api-mysql-config
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: mysql-password
+              name: sfa-api-mysql-config
+        - name: MYSQL_DATABASE
+          valueFrom:
+            secretKeyRef:
+              key: mysql-database
+              name: sfa-api-mysql-config
         image: sfa-api:{{ sfa_api_image_tag | default('latest') }}
         imagePullPolicy: Always
         name: sfa-api

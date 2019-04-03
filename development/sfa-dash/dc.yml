@@ -20,8 +20,26 @@ spec:
     spec:
       containers:
       - env:
-        - name: APP_FILE
-          value: 'sfa_dash/serve.py'
+        - name: APP_MODULE
+          value: sfa_dash:create_app()
+        - name: GUNICORN_CMD_ARGS
+          value: --ssl-version=5 --certfile=/certs/tls.crt --keyfile=/certs/tls.key
+            -k gevent --keep-alive=5 -w 8 --access-logformat '%(h)s %(l)s %(u)s %(t)s "%(r)s" %(s)s %(b)s "%(f)s" "%(a)s" "%({X-Forwarded-For}i)s"'          
+        - name: FLASK_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: flask-secret-key
+              name: sfa-dash-secret-config
+        - name: AUTH0_CLIENT_ID
+          valueFrom:
+            secretKeyRef:
+              key: auth0-client-id
+              name: sfa-dash-secret-config
+        - name: AUTH0_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: auth0-client-secret
+              name: sfa-dash-secret-config
         name: sfa-dash
         image: sfa-dash:latest
         ports:

@@ -1,3 +1,8 @@
 namespace: development
 github_trigger_secret: !ssm /okd/development/sfa-api/github_trigger_secret
 sfa_api_route: dev-api.solarforecastarbiter.org
+mysql_host: mysql
+mysql_port: '3306'
+mysql_user: !ssm /okd/development/sfa-api/mysql_user
+mysql_password: !ssm /okd/development/sfa-api/mysql_password
+mysql_database: arbiter_data
