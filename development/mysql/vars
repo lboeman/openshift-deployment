@@ -1,3 +1,4 @@
 namespace: development
 mysql_root_password: !ssm /okd/development/mysql/root_password
 mysql_database_name: arbiter_data
+alter_user_password: !ssm /okd/development/sfa-api/mysql_password
