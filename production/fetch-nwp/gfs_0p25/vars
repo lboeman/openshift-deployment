@@ -1,0 +1,2 @@
+namespace: production
+nwpmodel: "gfs_0p25"

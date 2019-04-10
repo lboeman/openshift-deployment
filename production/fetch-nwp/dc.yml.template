@@ -1,0 +1,69 @@
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  annotations: {}
+  generation: 1
+  labels:
+    app: fetch-nwp
+    model: {{ nwpmodel | replace('_', '') }}
+  name: fetch-nwp-{{ nwpmodel | replace('_', '') }}
+  namespace: {{ namespace }}
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    app: fetch-nwp
+    model: {{ nwpmodel | replace('_', '') }}
+  strategy:
+    activeDeadlineSeconds: 21600
+    resources: {}
+    type: Recreate
+    recreateParams: {}
+  template:
+    metadata:
+      labels:
+        app: fetch-nwp
+        model: {{ nwpmodel | replace('_', '') }}
+    spec:
+      containers:
+      - image: sfa-core:stable
+        imagePullPolicy: Always
+        name: fetch-nwp
+        command:
+          - sh
+          - -c
+          - "python -m solarforecastarbiter.io.fetch.nwp -v /nwp_forecasts {{ nwpmodel }}"
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 5Gi
+          requests:
+            cpu: 100m
+            memory: 400Mi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: "/nwp_forecasts/{{ nwpmodel }}"
+          name: forecasts
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: 
+        supplementalGroups: [5555]
+      terminationGracePeriodSeconds: 30
+      volumes: 
+      - name: forecasts
+        persistentVolumeClaim:
+          claimName: nwp-forecasts-archive-{{ nwpmodel | replace('_', '') }}
+  test: false
+  triggers:
+  - imageChangeParams:
+      automatic: true
+      containerNames:
+      - fetch-nwp
+      from:
+        kind: ImageStreamTag
+        name: sfa-core:stable
+        namespace: {{ namespace }}
+    type: ImageChange
+  - type: ConfigChange

@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nwp-forecasts-archive-{{ nwpmodel | replace('_', '') }}
+  labels:
+    app: fetch-nwp
+    model: {{ nwpmodel | replace('_', '') }}
+  namespace: {{ namespace }}
+  annotations: {}
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 20Gi
+  volumeName: nwp-forecasts-archive-{{ nwpmodel | replace('_', '') }}
+  storageClassName: ''
