@@ -29,13 +29,15 @@ spec:
       - image: sfa-core:stable
         imagePullPolicy: Always
         name: fetch-nwp
+        env:
+          - name: HDF5_USE_FILE_LOCKING
+            value: 'FALSE'
         command:
           - sh
           - -c
           - "python -m solarforecastarbiter.io.fetch.nwp -v /nwp_forecasts {{ nwpmodel }}"
         resources:
           limits:
-            cpu: 1000m
             memory: 5Gi
           requests:
             cpu: 100m
