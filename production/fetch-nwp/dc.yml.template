@@ -35,7 +35,7 @@ spec:
         command:
           - sh
           - -c
-          - "python -m solarforecastarbiter.io.fetch.nwp -v /nwp_forecasts {{ nwpmodel }}"
+          - "python -m solarforecastarbiter.io.fetch.nwp -v /nwp_forecasts {{ nwpmodel }} {% if workers is defined %}--workers={{ workers }}{% endif %}"
         resources:
           limits:
             memory: 5Gi
