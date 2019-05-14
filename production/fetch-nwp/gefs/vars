@@ -1,3 +1,5 @@
 namespace: production
 nwpmodel: "gefs"
 workers: 2
+usetmp: true
+sentry_dsn: !ssm /okd/sentry/coredsn

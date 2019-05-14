@@ -32,10 +32,12 @@ spec:
         env:
           - name: HDF5_USE_FILE_LOCKING
             value: 'FALSE'
+          - name: SENTRY_DSN
+            value: {{ sentry_dsn | default('') }}
         command:
           - sh
           - -c
-          - "python -m solarforecastarbiter.io.fetch.nwp -v /nwp_forecasts {{ nwpmodel }} {% if workers is defined %}--workers={{ workers }}{% endif %}"
+          - "python -m solarforecastarbiter.io.fetch.nwp -v /nwp_forecasts {{ nwpmodel }} {% if workers is defined %}--workers={{ workers }}{% endif %}{% if usetmp is defined and usetmp%} --use-tmp{% endif %}"
         resources:
           limits:
             memory: 5Gi

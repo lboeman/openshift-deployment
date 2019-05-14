@@ -59,6 +59,10 @@ spec:
             secretKeyRef:
               key: mysql-database
               name: sfa-api-mysql-config
+        - name: REDIS_SETTINGS
+          value: '/redis/redis-config.py'
+        - name: SENTRY_DSN
+          value: {{ sentry_dsn }}
         image: sfa-api:{{ sfa_api_image_tag | default('latest') }}
         imagePullPolicy: Always
         name: sfa-api
@@ -81,6 +85,8 @@ spec:
         volumeMounts:
         - mountPath: /certs
           name: cert-secret
+        - mountPath: /redis
+          name: redis-config
       dnsPolicy: ClusterFirst
       restartPolicy: Always
       schedulerName: default-scheduler
@@ -91,6 +97,10 @@ spec:
         secret:
           defaultMode: 420
           secretName: sfa-api-svc-cert
+      - name: redis-config
+        secret:
+          defaultMode: 420
+          secretName: sfa-api-redis-config
   test: false
   triggers:
   - imageChangeParams:

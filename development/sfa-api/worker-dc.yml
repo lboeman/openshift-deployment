@@ -1,0 +1,64 @@
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  annotations: {}
+  generation: 1
+  labels:
+    app: sfa-api
+  name: api-worker
+spec:
+  replicas: 1
+  revisionHistoryLimit: 5
+  selector:
+    deploymentconfig: api-worker
+  strategy:
+    activeDeadlineSeconds: 21600
+    resources: {}
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: sfa-api
+        deploymentconfig: api-worker
+    spec:
+      containers:
+      - env:
+        - name: SENTRY_DSN
+          value: {{ sentry_dsn }}
+        - name: APP_SCRIPT
+          value: /opt/app-root/bin/sfa-api
+        - name: APP_ARGS
+          value: worker /redis/redis-config.py
+        image: sfa-api:{{ sfa_api_image_tag | default('latest') }}
+        imagePullPolicy: Always
+        name: rqworker
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /redis
+          name: redis-config
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 120
+      volumes:
+      - name: redis-config
+        secret:
+          defaultMode: 420
+          secretName: sfa-api-redis-config
+  test: false
+  triggers:
+  - imageChangeParams:
+      automatic: true
+      containerNames:
+      - rqworker
+      from:
+        kind: ImageStreamTag
+        name: sfa-api:{{ sfa_api_image_tag | default('latest') }}
+    type: ImageChange
+  - type: ConfigChange

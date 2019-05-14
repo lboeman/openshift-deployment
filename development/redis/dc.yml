@@ -1,0 +1,114 @@
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  annotations: {}
+  generation: 1
+  labels:
+    app: {{ redis_app | default('redis') }}
+  name: {{ redis_name | default('redis') }}
+  namespace: {{ namespace }}
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    deploymentconfig: {{ redis_name | default('redis') }}
+  strategy:
+    activeDeadlineSeconds: 21600
+    resources: {}
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: {{ redis_app | default('redis') }}
+        deploymentconfig: {{ redis_name | default('redis') }}
+    spec:
+      containers:
+      - env:
+          - name: REDISCLI_AUTH
+            valueFrom:
+              secretKeyRef:
+                name: "{{ redis_name | default('redis') }}-auth"
+                key: redis-auth
+        image: redis:{{ redis_image_tag | default('latest') }}
+        imagePullPolicy: Always
+        name: redis
+        command:
+          - sh
+          - -c
+          - redis-server /conf/redis.conf --requirepass $REDISCLI_AUTH 
+        resources:
+          limits:
+            memory: "{{ redis_mem | default(1) }}Gi"
+          requests:
+            cpu: 100m
+            memory: 100Mi
+        readinessProbe:
+          exec:
+            command:
+              - /bin/sh
+              - -i
+              - -c
+              - redis-cli ping
+          initialDelaySeconds: 5
+          timeoutSeconds: 15
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /data
+          name: redis-data
+        - mountPath: /conf
+          name: redis-conf
+      - name: stunnel
+        image: stunnel:{{ stunnel_image_tag | default('latest') }}
+        imagePullPolicy: Always
+        command:
+          - sh
+          - -c
+          - stunnel /stunnel/config/stunnel.conf
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /stunnel/config
+          name: stunnel-conf
+        - mountPath: /stunnel/cert
+          name: stunnel-cert
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: redis-conf
+        configMap:
+          name: {{ config_name | default('redis') }}
+          items:
+            - key: redis-cnf
+              path: redis.conf
+              mode: 0440
+      - name: stunnel-conf
+        configMap:
+          name: {{ config_name | default('redis') }}
+          items:
+            - key: stunnel-cnf
+              path: stunnel.conf
+              mode: 0440
+      - name: stunnel-cert
+        secret:
+          secretName: "{{ redis_name | default('redis') }}-tls"
+          mode: 0440
+      - name: redis-data
+        persistentVolumeClaim:
+          claimName: "{{ redis_name| default('redis') }}"
+  test: false
+  triggers:
+  - imageChangeParams:
+      automatic: true
+      containerNames:
+      - stunnel
+      from:
+        kind: ImageStreamTag
+        name: stunnel:{{ stunnel_image_tag | default('latest') }}
+        namespace: {{ namespace }}
+    type: ImageChange
+  - type: ConfigChange

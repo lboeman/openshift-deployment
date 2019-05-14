@@ -2,6 +2,8 @@ apiVersion: v1
 kind: PersistentVolume
 metadata:
   name: nwp-forecasts-archive-{{ nwpmodel | replace('_', '') }}
+  annotations:
+    volume.beta.kubernetes.io/mount-options: nfsvers=4,noac,proto=tcp,rsize=32768,wsize=32768,noatime,nodiratime
   labels:
     app: fetch-nwp
     model: {{ nwpmodel | replace('_', '') }}

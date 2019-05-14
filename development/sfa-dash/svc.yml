@@ -6,6 +6,7 @@ metadata:
   labels:
     app: sfa-dash
   name: sfa-dash
+  namespace: {{ namespace }}
 spec:
   ports:
   - name: 8080-tcp

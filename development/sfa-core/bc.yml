@@ -32,6 +32,7 @@ spec:
           pip install ".[all]"
   strategy:
     dockerStrategy:
+      noCache: true
       from:
         kind: ImageStreamTag
         name: python:latest

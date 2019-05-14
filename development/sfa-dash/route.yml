@@ -5,8 +5,9 @@ metadata:
   labels:
     app: sfa-dash
   name: sfa-dash
+  namespace: {{ namespace }}
 spec:
-  host: dev-dashboard.solarforecastarbiter.org
+  host: '{{ dash_prefix | default('dev-') }}dashboard.solarforecastarbiter.org'
   port:
     targetPort: 8080-tcp
   tls:

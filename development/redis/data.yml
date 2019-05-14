@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: "{{ redis_name| default('redis') }}"
+  labels:
+    app: "{{ redis_app| default('redis') }}"
+  namespace: {{ namespace }}
+  annotations: {}
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 5Gi

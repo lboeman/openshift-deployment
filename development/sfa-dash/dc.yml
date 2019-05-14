@@ -6,6 +6,7 @@ metadata:
   labels:
     app: sfa-dash
   name: sfa-dash
+  namespace: {{ namespace }}
 spec:
   replicas: 1
   selector:
@@ -73,6 +74,7 @@ spec:
       - sfa-dash
       from:
         kind: ImageStreamTag
-        name: sfa-dash:latest
+        name: sfa-dash:{{ dash_image_tag | default('latest') }}
+        namespace: {{ namespace }}
     type: ImageChange
   - type: ConfigChange

@@ -1,0 +1,33 @@
+apiVersion: build.openshift.io/v1
+kind: BuildConfig
+metadata:
+  annotations: {}
+  labels: {}
+  name: stunnel
+  namespace: development
+spec:
+  failedBuildsHistoryLimit: 3
+  nodeSelector: null
+  output:
+    to:
+      kind: ImageStreamTag
+      name: stunnel:latest
+  postCommit: {}
+  resources: {}
+  runPolicy: Serial
+  source:
+    dockerfile: |
+      FROM centos:latest
+      USER root
+      RUN yum install -y --setopt=tsflags=nodocs stunnel && \
+          yum clean all && \
+          rm -rf /var/cache/yum
+      RUN mkdir /stunnel && chmod 777 /stunnel
+      USER 1001
+  strategy:
+    dockerStrategy: {}
+  successfulBuildsHistoryLimit: 3
+  triggers:
+  - imageChange:
+    type: ImageChange
+  - type: ConfigChange

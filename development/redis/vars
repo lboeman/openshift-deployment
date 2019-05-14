@@ -1,0 +1,11 @@
+namespace: development
+redis_image_tag: latest
+stunnel_image_tag: latest
+config_name: api-redis-cm
+redis_app: sfa-api
+redis_name: api-redis
+redis_auth: !ssm /okd/development/sfa-api/redis_auth
+redis_mem: 1
+
+ 
+
