@@ -1,0 +1,23 @@
+namespace: sfa-monitoring
+prometheus_config: !ssm /okd/monitoring/prometheus-config
+session_secret:  !ssm /okd/monitoring/sessionsecret
+grafana_cfg: |
+  [auth]
+  disable_login_form = true
+  disable_signout_menu = true
+  [auth.basic]
+  enabled = false
+  [auth.proxy]
+  auto_sign_up = true
+  enabled = true
+  header_name = X-Forwarded-User
+  [paths]
+  data = /var/lib/grafana
+  logs = /var/lib/grafana/logs
+  plugins = /var/lib/grafana/plugins
+  provisioning = /etc/grafana/provisioning
+  [server]
+  http_addr = 127.0.0.1
+  http_port = 3001
+  [users]
+  auto_assign_org_role = Editor

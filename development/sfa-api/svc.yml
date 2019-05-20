@@ -6,12 +6,17 @@ metadata:
   labels:
     app: sfa-api
   name: sfa-api
+  namespace: {{ namespace }}
 spec:
   ports:
   - name: 8080-tcp
     port: 8080
     protocol: TCP
     targetPort: 8080
+  - name: prometheus
+    port: 8081
+    protocol: TCP
+    targetPort: 8081
   selector:
     deploymentconfig: sfa-api
   sessionAffinity: None

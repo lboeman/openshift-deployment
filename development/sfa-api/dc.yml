@@ -6,6 +6,7 @@ metadata:
   labels:
     app: sfa-api
   name: sfa-api
+  namespace: {{ namespace }}
 spec:
   replicas: 1
   revisionHistoryLimit: 10
@@ -29,11 +30,12 @@ spec:
     spec:
       containers:
       - env:
+        - name: prometheus_multiproc_dir
+          value: /tmp
         - name: APP_MODULE
-          value: sfa_api:create_app()
-        - name: GUNICORN_CMD_ARGS
-          value: --ssl-version=5 --certfile=/certs/tls.crt --keyfile=/certs/tls.key
-            -k gevent --keep-alive=5 -w 8 --access-logformat '%(h)s %(l)s %(u)s %(t)s "%(r)s" %(s)s %(b)s "%(f)s" "%(a)s" "%({X-Forwarded-For}i)s"'
+          value: sfa_api:create_app_with_metrics()
+        - name: APP_CONFIG
+          value: ./gunicorn_config.py
         - name: MYSQL_HOST
           valueFrom:
             secretKeyRef:

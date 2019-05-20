@@ -1,0 +1,20 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  annotations: 
+    haproxy.router.openshift.io/ip_whitelist: 10.0.0.0/8
+  name: grafana
+  namespace: {{ namespace }}
+spec:
+  host: monitoring.solarforecastarbiter.org
+  port:
+    targetPort: https
+  tls:
+    termination: reencrypt
+  to:
+    kind: Service
+    name: grafana
+    weight: 100
+  wildcardPolicy: None
+status:
+  ingress: null
