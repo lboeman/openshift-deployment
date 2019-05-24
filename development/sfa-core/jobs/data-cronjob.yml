@@ -1,0 +1,35 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: "{{ network | replace(' ', '-') }}-reference-data"
+  labels:
+    app: reference-data
+  annotations: {}
+  namespace: "{{ namespace }}"
+spec:
+  schedule: "{{ schedule }}"
+  jobTemplate:
+    spec:
+      metadata:
+        labels:
+          app: reference-data
+      backoffLimit: 1
+      template:
+        spec:
+          containers:
+            - name: update-data
+              image: sfa-core:{{ image_tag }}
+              command:
+                - sh
+                - -c
+                - solararbiter referencedata update -v --base-url="{{ base_url }}" --network "{{ network.upper() }}" $(date -d "{{ start }}" -uIs) $(date -d "{{ end }}" -uIs)
+              env:
+                - name: SANDIA_API_KEY
+                  value: {{ sandia_api_key | default('') }}
+                - name: SFA_API_USER
+                  value: {{ api_user }}
+                - name: SFA_API_PASSWORD
+                  value: {{ api_password }}
+                - name: SENTRY_DSN
+                  value: {{ sentry_dsn }}
+          restartPolicy: Never

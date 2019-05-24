@@ -7,3 +7,6 @@ metadata:
     app: sfa-core
   name: sfa-core
   namespace: development
+spec:
+  lookupPolicy:
+    local: true

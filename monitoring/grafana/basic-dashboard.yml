@@ -19,6 +19,7 @@ data:
       "editable": true,
       "gnetId": null,
       "graphTooltip": 0,
+      "iteration": 1558636439775,
       "links": [],
       "panels": [
         {
@@ -62,11 +63,11 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "rate(flask_http_request_duration_seconds_count{status=\"200\"}[1m])",
+              "expr": "sum(irate(flask_http_request_duration_seconds_count{method=~\"$method\"}[1m])) by (method, url_rule)",
               "format": "time_series",
               "interval": "",
               "intervalFactor": 1,
-              "legendFormat": "{{ url_rule }}",
+              "legendFormat": "{{method}} {{ url_rule }}",
               "refId": "A"
             }
           ],
@@ -242,11 +243,12 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(rate(flask_http_request_duration_seconds_count{status!=\"200\"}[1m]))",
+              "expr": "sum(rate(flask_http_request_total{status!~\"[23]..\"}[1m])) by (status) ",
               "format": "time_series",
+              "hide": false,
               "interval": "",
               "intervalFactor": 1,
-              "legendFormat": "errors",
+              "legendFormat": "{{status}}",
               "refId": "A"
             }
           ],
@@ -306,7 +308,7 @@ data:
           "id": 11,
           "legend": {
             "alignAsTable": true,
-            "avg": false,
+            "avg": true,
             "current": true,
             "max": false,
             "min": false,
@@ -331,12 +333,12 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "increase(flask_http_request_duration_seconds_bucket{status=\"200\",le=\"0.25\"}[1m]) \n/ ignoring (le) increase(flask_http_request_duration_seconds_count{status=\"200\"}[1m])",
+              "expr": "sum(increase(flask_http_request_duration_seconds_bucket{status=~\"2..\",le=\"0.25\",method=~\"$method\"}[1m])) by (url_rule, method)\n/ ignoring (le) sum(increase(flask_http_request_duration_seconds_count{status=~\"2..\",method=~\"$method\"}[1m])) by (url_rule, method)",
               "format": "time_series",
               "instant": false,
               "interval": "",
               "intervalFactor": 1,
-              "legendFormat": "{{ url_rule }}",
+              "legendFormat": "{{method}} {{ url_rule }}",
               "refId": "A"
             }
           ],
@@ -398,7 +400,7 @@ data:
           "id": 6,
           "legend": {
             "alignAsTable": true,
-            "avg": false,
+            "avg": true,
             "current": true,
             "max": false,
             "min": false,
@@ -423,18 +425,19 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "rate(flask_http_request_duration_seconds_sum{status=\"200\"}[1m])\n/\nrate(flask_http_request_duration_seconds_count{status=\"200\"}[1m])",
+              "expr": "sum(rate(flask_http_request_duration_seconds_sum{status=~\"2..\",method=~\"$method\"}[1m])) by (method, url_rule)\n/\nsum(rate(flask_http_request_duration_seconds_count{status=~\"2..\",method=~\"$method\"}[1m])) by (method, url_rule)\n",
               "format": "time_series",
+              "hide": false,
               "interval": "",
               "intervalFactor": 1,
-              "legendFormat": "{{ url_rule }}",
+              "legendFormat": "{{ method }} {{ url_rule }} ",
               "refId": "A"
             }
           ],
           "thresholds": [],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Average response time [1m]",
+          "title": "Average response time",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -514,11 +517,11 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "histogram_quantile(0.5, rate(flask_http_request_duration_seconds_bucket{status=\"200\"}[1m]))",
+              "expr": "histogram_quantile(0.5, sum(rate(flask_http_request_duration_seconds_bucket{status=~\"2..\",method=~\"$method\"}[1m])) by (method, url_rule, le))",
               "format": "time_series",
               "interval": "",
               "intervalFactor": 1,
-              "legendFormat": "{{ url_rule }}",
+              "legendFormat": "{{method}} {{ url_rule }}",
               "refId": "A"
             }
           ],
@@ -603,11 +606,11 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "histogram_quantile(0.9, rate(flask_http_request_duration_seconds_bucket{status=\"200\"}[1m]))",
+              "expr": "histogram_quantile(0.9, sum(rate(flask_http_request_duration_seconds_bucket{status=~\"2..\",method=~\"$method\"}[1m])) by (method, url_rule, le))",
               "format": "time_series",
               "interval": "",
               "intervalFactor": 1,
-              "legendFormat": "{{ url_rule }}",
+              "legendFormat": "{{method}} {{ url_rule }}",
               "refId": "A"
             }
           ],
@@ -652,12 +655,62 @@ data:
           }
         }
       ],
-      "refresh": "10s",
+      "refresh": "5s",
       "schemaVersion": 16,
       "style": "dark",
       "tags": [],
       "templating": {
-        "list": []
+        "list": [
+          {
+            "allValue": null,
+            "current": {
+              "tags": [],
+              "text": "All",
+              "value": [
+                "$__all"
+              ]
+            },
+            "hide": 0,
+            "includeAll": true,
+            "label": null,
+            "multi": true,
+            "name": "method",
+            "options": [
+              {
+                "selected": true,
+                "text": "All",
+                "value": "$__all"
+              },
+              {
+                "selected": false,
+                "text": "GET",
+                "value": "GET"
+              },
+              {
+                "selected": false,
+                "text": "POST",
+                "value": "POST"
+              },
+              {
+                "selected": false,
+                "text": "DELETE",
+                "value": "DELETE"
+              },
+              {
+                "selected": false,
+                "text": "UPDATE",
+                "value": "UPDATE"
+              },
+              {
+                "selected": false,
+                "text": "PUT",
+                "value": "PUT"
+              }
+            ],
+            "query": "GET,POST,DELETE,UPDATE,PUT",
+            "type": "custom"
+          }
+        ]
       },
       "time": {
         "from": "now-30m",
@@ -667,8 +720,7 @@ data:
         "refresh_intervals": [
           "5s",
           "10s",
-          "30s",
-          "1m"
+          "30s"
         ],
         "time_options": [
           "5m",
@@ -687,7 +739,7 @@ data:
       "uid": "_eX4mpl3",
       "version": 1
     }
-  {% endraw %}
+{% endraw %}
 kind: ConfigMap
 metadata:
   name: grafana-dashboard-basic
