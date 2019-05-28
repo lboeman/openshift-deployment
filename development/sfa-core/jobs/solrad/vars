@@ -3,8 +3,5 @@ image_tag: latest
 network: noaa solrad
 schedule: '15 1 * * *'
 base_url: https://dev-api.solarforecastarbiter.org
-start: '$today 0 - 1 day'
+start: '$today 0 - 3 day'
 end: '$today 2'
-api_user: reference@solarforecastarbiter.org
-api_password: !ssm /okd/development/sfa-core/reference_user_password
-sentry_dsn: !ssm /okd/sentry/coredsn

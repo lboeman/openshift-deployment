@@ -24,12 +24,26 @@ spec:
                 - -c
                 - solararbiter referencedata update -v --base-url="{{ base_url }}" --network "{{ network.upper() }}" $(date -d "{{ start }}" -uIs) $(date -d "{{ end }}" -uIs)
               env:
+                {% if  network == 'sandia' -%}
                 - name: SANDIA_API_KEY
-                  value: {{ sandia_api_key | default('') }}
+                  valueFrom:
+                    secretKeyRef:
+                      key: sandia-api-key
+                      name: reference-data
+                {% endif -%}
                 - name: SFA_API_USER
-                  value: {{ api_user }}
+                  valueFrom:
+                    secretKeyRef:
+                      key: api-user
+                      name: reference-data
                 - name: SFA_API_PASSWORD
-                  value: {{ api_password }}
+                  valueFrom:
+                    secretKeyRef:
+                      key: api-password
+                      name: reference-data
                 - name: SENTRY_DSN
-                  value: {{ sentry_dsn }}
+                  valueFrom:
+                    secretKeyRef:
+                      key: sentry-dsn
+                      name: reference-data
           restartPolicy: Never
