@@ -6,6 +6,7 @@ metadata:
   labels:
     app: sfa-api
   name: api-worker
+  namespace: {{ namespace }}
 spec:
   replicas: 1
   revisionHistoryLimit: 5

@@ -13,6 +13,10 @@ spec:
     port: 8080
     protocol: TCP
     targetPort: 8080
+  - name: prometheus
+    port: 8081
+    protocol: TCP
+    targetPort: 8081
   selector:
     deploymentConfig: sfa-dash
   sessionAffinity: None

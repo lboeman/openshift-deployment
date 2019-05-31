@@ -1,0 +1,22 @@
+apiVersion: extensions/v1beta1
+kind: NetworkPolicy
+metadata:
+  name: allow-to-sfa-dash-metrics
+  namespace: {{ namespace }}
+spec:
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: openshift-monitoring
+    - podSelector:
+        matchLabels:
+          app: prometheus
+  - ports:
+    - port: 8081
+      protocol: TCP
+  podSelector:
+    matchLabels:
+      app: sfa-dash
+  policyTypes:
+  - Ingress

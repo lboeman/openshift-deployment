@@ -19,7 +19,7 @@ data:
       "editable": true,
       "gnetId": null,
       "graphTooltip": 0,
-      "iteration": 1558636439775,
+      "iteration": 1559339953790,
       "links": [],
       "panels": [
         {
@@ -63,8 +63,9 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(irate(flask_http_request_duration_seconds_count{method=~\"$method\"}[1m])) by (method, url_rule)",
+              "expr": "sum(irate(flask_http_request_duration_seconds_count{method=~\"$method\",namespace=~\"$namespace\",job=~\"$app\"}[1m])) by (method, url_rule)",
               "format": "time_series",
+              "hide": false,
               "interval": "",
               "intervalFactor": 1,
               "legendFormat": "{{method}} {{ url_rule }}",
@@ -153,7 +154,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "increase(flask_http_request_total[1m])",
+              "expr": "sum(increase(flask_http_request_total{method=~\"$method\",namespace=~\"$namespace\",job=~\"$app\"}[1m])) by (status)",
               "format": "time_series",
               "interval": "",
               "intervalFactor": 1,
@@ -243,7 +244,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(rate(flask_http_request_total{status!~\"[23]..\"}[1m])) by (status) ",
+              "expr": "sum(rate(flask_http_request_total{status!~\"[23]..\",method=~\"$method\",namespace=~\"$namespace\",job=~\"$app\"}[1m])) by (status) ",
               "format": "time_series",
               "hide": false,
               "interval": "",
@@ -333,7 +334,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(increase(flask_http_request_duration_seconds_bucket{status=~\"2..\",le=\"0.25\",method=~\"$method\"}[1m])) by (url_rule, method)\n/ ignoring (le) sum(increase(flask_http_request_duration_seconds_count{status=~\"2..\",method=~\"$method\"}[1m])) by (url_rule, method)",
+              "expr": "sum(increase(flask_http_request_duration_seconds_bucket{status=~\"2..\",le=\"0.25\",method=~\"$method\",namespace=~\"$namespace\",job=~\"$app\"}[1m])) by (url_rule, method)\n/ ignoring (le) sum(increase(flask_http_request_duration_seconds_count{status=~\"2..\",method=~\"$method\",namespace=~\"$namespace\",job=~\"$app\"}[1m])) by (url_rule, method)",
               "format": "time_series",
               "instant": false,
               "interval": "",
@@ -425,7 +426,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(rate(flask_http_request_duration_seconds_sum{status=~\"2..\",method=~\"$method\"}[1m])) by (method, url_rule)\n/\nsum(rate(flask_http_request_duration_seconds_count{status=~\"2..\",method=~\"$method\"}[1m])) by (method, url_rule)\n",
+              "expr": "sum(rate(flask_http_request_duration_seconds_sum{status=~\"2..\",method=~\"$method\",namespace=~\"$namespace\",job=~\"$app\"}[1m])) by (method, url_rule)\n/\nsum(rate(flask_http_request_duration_seconds_count{status=~\"2..\",method=~\"$method\",namespace=~\"$namespace\",job=~\"$app\"}[1m])) by (method, url_rule)\n",
               "format": "time_series",
               "hide": false,
               "interval": "",
@@ -517,7 +518,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "histogram_quantile(0.5, sum(rate(flask_http_request_duration_seconds_bucket{status=~\"2..\",method=~\"$method\"}[1m])) by (method, url_rule, le))",
+              "expr": "histogram_quantile(0.5, sum(rate(flask_http_request_duration_seconds_bucket{status=~\"2..\",method=~\"$method\",namespace=~\"$namespace\",job=~\"$app\"}[1m])) by (method, url_rule, le))",
               "format": "time_series",
               "interval": "",
               "intervalFactor": 1,
@@ -606,7 +607,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "histogram_quantile(0.9, sum(rate(flask_http_request_duration_seconds_bucket{status=~\"2..\",method=~\"$method\"}[1m])) by (method, url_rule, le))",
+              "expr": "histogram_quantile(0.9, sum(rate(flask_http_request_duration_seconds_bucket{status=~\"2..\",method=~\"$method\",namespace=~\"$namespace\",job=~\"$app\"}[1m])) by (method, url_rule, le))",
               "format": "time_series",
               "interval": "",
               "intervalFactor": 1,
@@ -664,6 +665,7 @@ data:
           {
             "allValue": null,
             "current": {
+              "selected": true,
               "tags": [],
               "text": "All",
               "value": [
@@ -709,11 +711,79 @@ data:
             ],
             "query": "GET,POST,DELETE,UPDATE,PUT",
             "type": "custom"
+          },
+          {
+            "allValue": null,
+            "current": {
+              "tags": [],
+              "text": "All",
+              "value": [
+                "$__all"
+              ]
+            },
+            "hide": 0,
+            "includeAll": true,
+            "label": null,
+            "multi": true,
+            "name": "namespace",
+            "options": [
+              {
+                "selected": true,
+                "text": "All",
+                "value": "$__all"
+              },
+              {
+                "selected": false,
+                "text": "development",
+                "value": "development"
+              },
+              {
+                "selected": false,
+                "text": "production",
+                "value": "production"
+              }
+            ],
+            "query": "development,production",
+            "type": "custom"
+          },
+          {
+            "allValue": null,
+            "current": {
+              "tags": [],
+              "text": "sfa-api",
+              "value": [
+                "sfa-api"
+              ]
+            },
+            "hide": 0,
+            "includeAll": true,
+            "label": null,
+            "multi": true,
+            "name": "app",
+            "options": [
+              {
+                "selected": false,
+                "text": "All",
+                "value": "$__all"
+              },
+              {
+                "selected": true,
+                "text": "sfa-api",
+                "value": "sfa-api"
+              },
+              {
+                "selected": false,
+                "text": "sfa-dash",
+                "value": "sfa-dash"
+              }
+            ],
+            "query": "sfa-api,sfa-dash",
+            "type": "custom"
           }
         ]
       },
       "time": {
-        "from": "now-30m",
+        "from": "now-1h",
         "to": "now"
       },
       "timepicker": {
@@ -735,9 +805,9 @@ data:
         ]
       },
       "timezone": "",
-      "title": "API Dashboard",
+      "title": "Flask Dashboard",
       "uid": "_eX4mpl3",
-      "version": 1
+      "version": 2
     }
 {% endraw %}
 kind: ConfigMap

@@ -21,11 +21,14 @@ spec:
     spec:
       containers:
       - env:
+        - name: prometheus_multiproc_dir
+          value: /metrics
         - name: APP_MODULE
-          value: sfa_dash:create_app()
-        - name: GUNICORN_CMD_ARGS
-          value: --ssl-version=5 --certfile=/certs/tls.crt --keyfile=/certs/tls.key
-            -k gevent --keep-alive=5 -w 8 --access-logformat '%(h)s %(l)s %(u)s %(t)s "%(r)s" %(s)s %(b)s "%(f)s" "%(a)s" "%({X-Forwarded-For}i)s"'          
+          value: sfa_dash:create_app_with_metrics({% if dash_config is defined %}'{{ dash_config }}'{% endif %})
+        - name: APP_CONFIG
+          value: ./gunicorn_config.py
+        - name: SENTRY_DSN
+          value: {{ sentry_dsn }}
         - name: FLASK_SECRET_KEY
           valueFrom:
             secretKeyRef:
@@ -41,10 +44,19 @@ spec:
             secretKeyRef:
               key: auth0-client-secret
               name: sfa-dash-secret-config
+        {% if mysql_secret is defined and mysql_secret -%}
+        - name: SQLALCHEMY_DATABASE_URI
+          valueFrom:
+            secretKeyRef:
+              key: mysql-secret
+              name: sfa-dash-secret-config
+        {%- endif %}
         name: sfa-dash
         image: sfa-dash:latest
         ports:
         - containerPort: 8080
+          protocol: TCP
+        - containerPort: 8081
           protocol: TCP
         resources: {}
         livenessProbe:
@@ -57,11 +69,15 @@ spec:
         volumeMounts:
         - mountPath: /certs
           name: cert-secret
+        - mountPath: /metrics
+          name: metrics
       dnsPolicy: ClusterFirst
       restartPolicy: Always
       securityContext: {}
       terminationGracePeriodSeconds: 30
       volumes:
+      - name: metrics
+        emptyDir: {}
       - name: cert-secret
         secret:
           defaultMode: 420

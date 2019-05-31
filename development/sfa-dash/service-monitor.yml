@@ -1,10 +1,10 @@
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: sfa-api-monitor
+  name: sfa-dash-monitor
   namespace: openshift-monitoring
   labels:
-    k8s-app: sfa-api
+    k8s-app: sfa-dash
 spec:
   namespaceSelector:
     matchNames:
@@ -12,6 +12,6 @@ spec:
       - production
   selector:
     matchLabels:
-      app: sfa-api
+      app: sfa-dash
   endpoints:
   - port: prometheus

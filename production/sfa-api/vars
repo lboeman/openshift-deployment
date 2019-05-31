@@ -1,3 +1,16 @@
 namespace: production
 sfa_api_route: api.solarforecastarbiter.org
 sfa_api_image_tag: stable
+mysql_host: !ssm /okd/production/sfa-api/mysql_host
+mysql_port: '3306'
+mysql_user: !ssm /okd/production/sfa-api/mysql_user
+mysql_password: !ssm /okd/production/sfa-api/mysql_password
+mysql_database: arbiter_data
+sentry_dsn: !ssm /okd/sentry/apidsn
+redis_auth: !ssm /okd/production/sfa-api/redis_auth
+redis_host: api-redis.production.svc
+redis_config: |
+  REDIS_PORT = 6380
+  REDIS_DB = 0
+  REDIS_USE_SSL = True
+  LOG_LEVEL = 'INFO'

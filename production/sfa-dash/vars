@@ -1,0 +1,12 @@
+namespace: production
+flask_secret_key: !ssm /okd/production/sfa-dash/flask_secret_key
+auth0_client_id: !ssm /okd/production/sfa-dash/auth0_client_id
+auth0_client_secret: !ssm /okd/production/sfa-dash/auth0_client_secret
+dash_prefix: ''
+dash_image_tag: stable
+sentry_dsn: !ssm /okd/sentry/dashdsn
+dash_config: 'sfa_dash.config.ProdConfig'
+mysql_secret: true
+mysql_password: !ssm /okd/production/sfa-dash/mysql_password
+mysql_user: !ssm /okd/production/sfa-dash/mysql_user
+mysql_db: !ssm /okd/production/sfa-dash/mysql_db
