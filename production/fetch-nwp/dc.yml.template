@@ -37,7 +37,7 @@ spec:
         command:
           - sh
           - -c
-          - "python -m solarforecastarbiter.io.fetch.nwp -v /nwp_forecasts {{ nwpmodel }} {% if workers is defined %}--workers={{ workers }}{% endif %}{% if usetmp is defined and usetmp%} --use-tmp{% endif %}"
+          - "solararbiter fetchnwp -v /data {{ nwpmodel }} {% if workers is defined %}--workers={{ workers }}{% endif %}{% if usetmp is defined and usetmp%} --use-tmp{% endif %}"
         resources:
           limits:
             memory: 5Gi
@@ -47,7 +47,7 @@ spec:
         terminationMessagePath: /dev/termination-log
         terminationMessagePolicy: File
         volumeMounts:
-        - mountPath: "/nwp_forecasts/{{ nwpmodel }}"
+        - mountPath: "/data/{{ nwpmodel }}"
           name: forecasts
       dnsPolicy: ClusterFirst
       restartPolicy: Always

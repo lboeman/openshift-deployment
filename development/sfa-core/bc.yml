@@ -24,6 +24,7 @@ spec:
           yum install -y --setopt=tsflags=nodocs wgrib2 && \
           yum clean all && \
           rm -rf /var/cache/yum
+      RUN mkdir /data && chown root:5555 /data && chmod 0775 /data
       USER 1001
       RUN git clone https://github.com/solararbiter/solarforecastarbiter-core /tmp/src && \
           shopt -s dotglob &&\ 
