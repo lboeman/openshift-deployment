@@ -14,4 +14,4 @@ redis_config: |
   REDIS_DB = 0
   REDIS_USE_SSL = True
   LOG_LEVEL = 'INFO'
-  
+  QUEUES = ['default', 'reports']
