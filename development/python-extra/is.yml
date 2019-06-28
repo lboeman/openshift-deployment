@@ -1,0 +1,12 @@
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  annotations: {}
+  generation: 1
+  labels:
+    app: python-extra
+  name: python-extra
+  namespace: development
+spec:
+  lookupPolicy:
+    local: true

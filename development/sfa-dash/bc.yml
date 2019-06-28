@@ -24,7 +24,7 @@ spec:
     sourceStrategy:
       from:
         kind: ImageStreamTag
-        name: python:latest
+        name: python-extra:latest
     type: Source
   triggers:
   - imageChange:
