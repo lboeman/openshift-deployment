@@ -1,9 +1,9 @@
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
-  name: "{{ network | replace(' ', '-') }}-reference-data"
+  name: reference-nwp
   labels:
-    app: reference-data
+    app: reference-nwp
   annotations: {}
   namespace: "{{ namespace }}"
 spec:
@@ -12,25 +12,21 @@ spec:
     spec:
       metadata:
         labels:
-          app: reference-data
+          app: reference-nwp
       backoffLimit: 1
       template:
         spec:
           containers:
-            - name: update-data
+            - name: update-nwp
               image: sfa-core:{{ image_tag }}
               command:
                 - sh
                 - -c
-                - solararbiter referencedata update -v --base-url="{{ base_url }}" --network "{{ network.upper() }}" $(date -d "{{ start }}" -uIs) $(date -d "{{ end }}" -uIs)
+                - solararbiter referencenwp -v --base-url="{{ base_url }}" /data
+              volumeMounts:
+                - mountPath: /data
+                  name: data
               env:
-                {% if  network == 'doe rtc' -%}
-                - name: DOE_RTC_API_KEY
-                  valueFrom:
-                    secretKeyRef:
-                      key: sandia-api-key
-                      name: reference-data
-                {% endif -%}
                 - name: SFA_API_USER
                   valueFrom:
                     secretKeyRef:
@@ -47,3 +43,7 @@ spec:
                       key: sentry-dsn
                       name: reference-data
           restartPolicy: Never
+          volumes:
+            - name: data
+              persistentVolumeClaim:
+                claimName: nwp-forecasts-archive-{{ namespace }}

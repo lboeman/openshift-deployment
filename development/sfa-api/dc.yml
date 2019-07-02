@@ -30,6 +30,8 @@ spec:
     spec:
       containers:
       - env:
+        - name: REDOC_VERSION
+          value: {{ redoc_version | default('next') }}
         - name: prometheus_multiproc_dir
           value: /tmp
         - name: APP_MODULE

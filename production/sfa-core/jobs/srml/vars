@@ -1,0 +1,7 @@
+namespace: production
+image_tag: stable
+network: uo srml
+schedule: '0 2 * * *'
+base_url: https://api.solarforecastarbiter.org
+start: '$today 0 - 1 day'
+end: '$today 2'

@@ -1,6 +1,6 @@
 namespace: development
 image_tag: latest
-network: sandia
+network: doe rtc
 schedule: '0 1 * * *'
 base_url: https://dev-api.solarforecastarbiter.org
 start: '$today 0 - 2 day'
