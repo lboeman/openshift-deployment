@@ -4,4 +4,4 @@ flask_secret_key: !ssm /okd/development/sfa-dash/flask_secret_key
 auth0_client_id: !ssm /okd/development/sfa-dash/auth0_client_id
 auth0_client_secret: !ssm /okd/development/sfa-dash/auth0_client_secret
 sentry_dsn: !ssm /okd/sentry/dashdsn
-github_core_trigger_secret !ssm /okd/development/sfa-core/github_trigger_secret
+github_core_trigger_secret: !ssm /okd/development/sfa-core/github_trigger_secret
