@@ -34,3 +34,7 @@ spec:
     github:
       secretReference:
         name: sfa-dash-trigger
+  - type: GitHub
+    github:
+      secretReference:
+        name: sfa-core-trigger
