@@ -5,6 +5,7 @@ metadata:
   labels:
     app: sfa-dash
   name: sfa-dash
+  namespace: {{ namespace }}
 spec:
   failedBuildsHistoryLimit: 5
   nodeSelector: null
