@@ -5,6 +5,7 @@ metadata:
   labels:
     app: sfa-dash
   name: sfa-dash
+  namespace: {{ namespace }}
 spec:
   failedBuildsHistoryLimit: 5
   nodeSelector: null
@@ -34,3 +35,7 @@ spec:
     github:
       secretReference:
         name: sfa-dash-trigger
+  - type: GitHub
+    github:
+      secretReference:
+        name: sfa-core-trigger
