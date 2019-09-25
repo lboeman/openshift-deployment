@@ -70,7 +70,7 @@ spec:
             secretKeyRef:
               key: alter-adminuser-password
               name: mysql
-        image: percona:8.0-centos
+        image: percona:8.0.13-4-centos
         imagePullPolicy: IfNotPresent
         livenessProbe:
           failureThreshold: 3
