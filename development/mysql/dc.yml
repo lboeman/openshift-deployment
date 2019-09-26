@@ -46,6 +46,7 @@ spec:
             cat <<\EOF > 1_alter_user.sh
             #! /bin/bash
             MYSQL_PWD=$MYSQL_ROOT_PASSWORD mysql -S /tmp/mysql.sock -u root -e "ALTER USER 'apiuser'@'%' IDENTIFIED BY '$ALTER_USER_PASSWORD'"
+            MYSQL_PWD=$MYSQL_ROOT_PASSWORD mysql -S /tmp/mysql.sock -u root -e "ALTER USER 'frameworkadmin'@'%' IDENTIFIED BY '$ALTER_ADMINUSER_PASSWORD'"
             EOF
       containers:
       - env:
@@ -64,7 +65,12 @@ spec:
             secretKeyRef:
               key: alter-user-password
               name: mysql
-        image: percona:8.0-centos
+        - name: ALTER_ADMINUSER_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: alter-adminuser-password
+              name: mysql
+        image: percona:8.0.13-4-centos
         imagePullPolicy: IfNotPresent
         livenessProbe:
           failureThreshold: 3
