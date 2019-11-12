@@ -35,9 +35,19 @@ spec:
         - name: prometheus_multiproc_dir
           value: /tmp
         - name: APP_MODULE
-          value: sfa_api:create_app_with_metrics()
+          value: sfa_api:app_with_metrics
         - name: APP_CONFIG
           value: ./gunicorn_config.py
+        - name: AUTH0_CLIENT_ID
+          valueFrom:
+            secretKeyRef:
+              key: auth0-client-id
+              name: sfa-api-secrets
+        - name: AUTH0_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: auth0-client-secret
+              name: sfa-api-secrets
         - name: MYSQL_HOST
           valueFrom:
             secretKeyRef:

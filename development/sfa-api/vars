@@ -7,6 +7,8 @@ mysql_port: '3306'
 mysql_user: !ssm /okd/development/sfa-api/mysql_user
 mysql_password: !ssm /okd/development/sfa-api/mysql_password
 mysql_database: arbiter_data
+auth0_client_id: !ssm /okd/development/sfa-api/auth0_client_id
+auth0_client_secret: !ssm /okd/development/sfa-api/auth0_client_secret
 sentry_dsn: !ssm /okd/sentry/apidsn
 redis_auth: !ssm /okd/development/sfa-api/redis_auth
 redis_host: api-redis.development.svc
