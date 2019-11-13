@@ -24,7 +24,7 @@ spec:
         - name: prometheus_multiproc_dir
           value: /metrics
         - name: APP_MODULE
-          value: sfa_dash:create_app_with_metrics({% if dash_config is defined %}'{{ dash_config }}'{% endif %})
+          value: {{ dashboard_app }}
         - name: APP_CONFIG
           value: ./gunicorn_config.py
         - name: SENTRY_DSN
