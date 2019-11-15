@@ -5,7 +5,7 @@ auth0_client_secret: !ssm /okd/production/sfa-dash/auth0_client_secret
 dash_prefix: ''
 dash_image_tag: stable
 sentry_dsn: !ssm /okd/sentry/dashdsn
-dash_config: 'sfa_dash.config.ProdConfig'
+dashboard_app: 'sfa_dash:app'
 mysql_secret: true
 mysql_password: !ssm /okd/production/sfa-dash/mysql_password
 mysql_user: !ssm /okd/production/sfa-dash/mysql_user
