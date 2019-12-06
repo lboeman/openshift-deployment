@@ -56,7 +56,7 @@ RUN set -ex \
     && tar -xJC $SRC_DIR --strip-components=1 -f python.tar.xz \
     && rm python.tar.xz \
     && cd $SRC_DIR \
-    && export EXTRATESTOPTS="-x test_gdb -x test_posix -x test_selectors -x test_mailbox" \
+    && export EXTRATESTOPTS="-x test_gdb -x test_posix -x test_selectors -x test_mailbox -x test_socket -x test_faulthandler" \
     && source scl_source enable devtoolset-8 \
     && ./configure \
     --enable-shared \
