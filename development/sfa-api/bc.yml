@@ -5,6 +5,7 @@ metadata:
   labels:
     app: sfa-api
   name: sfa-api
+  namespace: {{ namespace }}
 spec:
   failedBuildsHistoryLimit: 5
   nodeSelector: null
@@ -28,8 +29,12 @@ spec:
     type: Source
   successfulBuildsHistoryLimit: 5
   triggers:
-  - imageChange:
+  - imageChange: {}
     type: ImageChange
+  - imageChange:
+      from:
+        kind: ImageStreamTag
+        name: sfa-core:latest
   - type: ConfigChange
   - type: GitHub
     github:

@@ -28,14 +28,14 @@ spec:
         name: python-extra:latest
     type: Source
   triggers:
-  - imageChange:
+  - imageChange: {}
     type: ImageChange
+  - imageChange:
+      from:
+        kind: ImageStreamTag
+        name: sfa-core:latest
   - type: ConfigChange
   - type: GitHub
     github:
       secretReference:
         name: sfa-dash-trigger
-  - type: GitHub
-    github:
-      secretReference:
-        name: sfa-core-trigger
