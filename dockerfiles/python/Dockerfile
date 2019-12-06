@@ -10,8 +10,7 @@ ENV SUMMARY="Platform for building and running $PYTHON_VERSION applications" \
     PYTHON_VERSION=3.7.5 \
     PYTHON_PIP_VERSION=19.3.1\
     SRC_DIR=/usr/src/python3 \
-    PATH=/opt/app-root/src/bin:/opt/app-root/bin:/usr/local/bin:$PATH\
-    GNUPGHOME=/tmp/gnupg
+    PATH=/opt/app-root/src/bin:/opt/app-root/bin:/usr/local/bin:$PATH
 
 
 LABEL summary="$SUMMARY" \
@@ -98,7 +97,7 @@ RUN set -ex \
     && yum autoremove -y $buildDeps \
     && yum remove -y $devDeps \
     && yum clean all && rm -rf /var/cache/yum \
-    && rm -rf ~/.cache $SRC_DIR
+    && rm -rf ~/.cache $SRC_DIR $GNUPGHOME
 
 
 # make some useful symlinks that are expected to exist
