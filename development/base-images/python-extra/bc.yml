@@ -3,41 +3,32 @@ kind: BuildConfig
 metadata:
   annotations: {}
   labels:
-    app: sfa-api
-  name: sfa-api
-  namespace: {{ namespace }}
+    app: python-extra
+  name: python-extra
+  namespace: development
 spec:
   failedBuildsHistoryLimit: 3
   nodeSelector: null
   output:
     to:
       kind: ImageStreamTag
-      name: sfa-api:latest
+      name: python-extra:latest
   postCommit: {}
   resources: {}
   runPolicy: Serial
   source:
     git:
       ref: master
-      uri: https://github.com/solararbiter/solarforecastarbiter-api
+      uri: https://github.com/solararbiter/openshift-deployment
     type: Git
+    contextDir: "dockerfiles/python-extra"
   strategy:
-    sourceStrategy:
+    dockerStrategy:
       from:
         kind: ImageStreamTag
-        name: python-extra:latest
-    type: Source
+        name: python:latest
   successfulBuildsHistoryLimit: 3
   triggers:
   - imageChange: {}
     type: ImageChange
-  - imageChange:
-      from:
-        kind: ImageStreamTag
-        name: sfa-core:latest
   - type: ConfigChange
-  - type: GitHub
-    github:
-      secretReference:
-        name: sfa-api-trigger
-
