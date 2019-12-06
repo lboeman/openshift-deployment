@@ -35,6 +35,7 @@ spec:
       from:
         kind: ImageStreamTag
         name: sfa-core:latest
+    type: ImageChange
   - type: ConfigChange
   - type: GitHub
     github:

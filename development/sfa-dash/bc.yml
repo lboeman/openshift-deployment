@@ -7,7 +7,7 @@ metadata:
   name: sfa-dash
   namespace: {{ namespace }}
 spec:
-  failedBuildsHistoryLimit: 5
+  failedBuildsHistoryLimit: 3
   nodeSelector: null
   output:
     to:
@@ -27,10 +27,12 @@ spec:
         kind: ImageStreamTag
         name: python-extra:latest
     type: Source
+  successfulBuildsHistoryLimit: 3
   triggers:
   - imageChange: {}
     type: ImageChange
-  - imageChange:
+  - type: ImageChange
+    imageChange:
       from:
         kind: ImageStreamTag
         name: sfa-core:latest
