@@ -7,7 +7,7 @@ metadata:
   name: sfa-core
   namespace: development
 spec:
-  failedBuildsHistoryLimit: 5
+  failedBuildsHistoryLimit: 3
   nodeSelector: null
   output:
     to:
@@ -18,17 +18,10 @@ spec:
   runPolicy: Serial
   source:
     dockerfile: |
-      FROM python:latest
-      USER root
-      RUN yum install -y epel-release && \
-          yum install -y --setopt=tsflags=nodocs wgrib2 && \
-          yum clean all && \
-          rm -rf /var/cache/yum
-      RUN mkdir /data && chown root:5555 /data && chmod 0775 /data
-      USER 1001
+      FROM python-extra:latest
       RUN git clone https://github.com/solararbiter/solarforecastarbiter-core /tmp/src && \
-          shopt -s dotglob &&\ 
-          mv /tmp/src/* ./ && \
+          shopt -s dotglob &&\
+          cd /tmp/src && \
           pip install -r requirements.txt && \
           pip install ".[all]"
   strategy:
@@ -36,10 +29,10 @@ spec:
       noCache: true
       from:
         kind: ImageStreamTag
-        name: python:latest
-  successfulBuildsHistoryLimit: 5
+        name: python-extra:latest
+  successfulBuildsHistoryLimit: 3
   triggers:
-  - imageChange:
+  - imageChange: {}
     type: ImageChange
   - type: ConfigChange
   - type: GitHub
