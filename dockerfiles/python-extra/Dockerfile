@@ -82,23 +82,24 @@ RUN set -ex \
     && rm -rf ~/.cache $GPG_SRC_DIR $GNUPGHOME
 
 # link gpgme python package to virtual env
+# install wgrib2
+# install pandoc
+# chown things
 RUN set -ex \
     && export PYTHON_MAJOR_VER="$(python -V | awk '{print $2}' | cut -d. -f-2)" \
     && ln -s "/usr/local/lib/python$PYTHON_MAJOR_VER/site-packages/gpg" "/opt/app-root/lib/python$PYTHON_MAJOR_VER/site-packages/" \
-    && /opt/app-root/bin/python -c "import gpg"
+    && /opt/app-root/bin/python -c "import gpg" \
+    && yum install -y epel-release  \
+    && yum install -y --setopt=tsflags=nodocs wgrib2 \
+    && yum clean all \
+    && rm -rf /var/cache/yum \
+    && wget -q -P /tmp https://github.com/jgm/pandoc/releases/download/2.7.3/pandoc-2.7.3-linux.tar.gz \
+    && tar xvzf /tmp/pandoc-2.7.3-linux.tar.gz --strip-components 1 -C /opt/app-root  \
+    && rm -f /tmp/pandoc-2.7.3-linux.tar.gz \
+    && chown -R 1001:0 ${APP_ROOT} \
+    && fix-permissions ${APP_ROOT} -P \
+    && mkdir /data \
+    && chown root:5555 /data \
+    && chmod 0775 /data
 
-# install wgrib2 library
-RUN yum install -y epel-release && \
-    yum install -y --setopt=tsflags=nodocs wgrib2 && \
-    yum clean all && \
-    rm -rf /var/cache/yum
-
-# install pandoc
-RUN wget -q -P /tmp https://github.com/jgm/pandoc/releases/download/2.7.3/pandoc-2.7.3-linux.tar.gz && \
-    tar xvzf /tmp/pandoc-2.7.3-linux.tar.gz --strip-components 1 -C /opt/app-root && \
-    rm -f /tmp/pandoc-2.7.3-linux.tar.gz
-
-RUN chown -R 1001:0 ${APP_ROOT} && \
-    fix-permissions ${APP_ROOT} -P && \
-    mkdir /data && chown root:5555 /data && chmod 0775 /data
 USER 1001
