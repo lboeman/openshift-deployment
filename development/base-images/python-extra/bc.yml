@@ -1,0 +1,34 @@
+apiVersion: build.openshift.io/v1
+kind: BuildConfig
+metadata:
+  annotations: {}
+  labels:
+    app: python-extra
+  name: python-extra
+  namespace: development
+spec:
+  failedBuildsHistoryLimit: 3
+  nodeSelector: null
+  output:
+    to:
+      kind: ImageStreamTag
+      name: python-extra:latest
+  postCommit: {}
+  resources: {}
+  runPolicy: Serial
+  source:
+    git:
+      ref: master
+      uri: https://github.com/solararbiter/openshift-deployment
+    type: Git
+    contextDir: "dockerfiles/python-extra"
+  strategy:
+    dockerStrategy:
+      from:
+        kind: ImageStreamTag
+        name: python:latest
+  successfulBuildsHistoryLimit: 3
+  triggers:
+  - imageChange: {}
+    type: ImageChange
+  - type: ConfigChange
