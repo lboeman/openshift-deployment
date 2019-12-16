@@ -10,3 +10,6 @@ mysql_secret: true
 mysql_password: !ssm /okd/production/sfa-dash/mysql_password
 mysql_user: !ssm /okd/production/sfa-dash/mysql_user
 mysql_db: !ssm /okd/production/sfa-dash/mysql_db
+gpg_key_id: F3189021BD77927B91F4316722BD497C0930F8B0
+gpg_passphrase: !ssm dash-gpg-password
+gpg_secret: !ssm dash-gpg-secret-key

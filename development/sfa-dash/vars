@@ -5,4 +5,6 @@ auth0_client_id: !ssm /okd/development/sfa-dash/auth0_client_id
 auth0_client_secret: !ssm /okd/development/sfa-dash/auth0_client_secret
 sentry_dsn: !ssm /okd/sentry/dashdsn
 dashboard_app: 'sfa_dash:dev_app'
-github_core_trigger_secret: !ssm /okd/development/sfa-core/github_trigger_secret
+gpg_key_id: F3189021BD77927B91F4316722BD497C0930F8B0
+gpg_passphrase: !ssm dash-gpg-password
+gpg_secret: !ssm dash-gpg-secret-key

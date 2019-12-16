@@ -19,6 +19,21 @@ spec:
         app: sfa-dash
         deploymentConfig: sfa-dash
     spec:
+      initContainers:
+      - name: setupgpg
+        image: sfa-dash:latest
+        env:
+        - name: GNUPGHOME
+          value: /gpghome
+        command:
+          - sh
+          - -c
+          - "gpg --batch --passphrase-file /gpg/passphrase.txt --import /gpg/key.gpg && cp /gpg/passphrase.txt /gpghome/."
+        volumeMounts:
+        - mountPath: /gpg
+          name: gpg
+        - mountPath: /gpghome
+          name: gpghome
       containers:
       - env:
         - name: prometheus_multiproc_dir
@@ -29,6 +44,15 @@ spec:
           value: ./gunicorn_config.py
         - name: SENTRY_DSN
           value: {{ sentry_dsn }}
+        - name: GNUPGHOME
+          value: /gpg
+        - name: GPG_PASSPHRASE_FILE
+          value: /gpg/passphrase.txt
+        - name: GPG_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              key: gpg-key-id
+              name: sfa-dash-gpg-secret
         - name: FLASK_SECRET_KEY
           valueFrom:
             secretKeyRef:
@@ -67,6 +91,8 @@ spec:
         terminationMessagePath: /dev/terminal-log
         terminationMessagePolicy: File
         volumeMounts:
+        - mountPath: /gpg
+          name: gpghome
         - mountPath: /certs
           name: cert-secret
         - mountPath: /metrics
@@ -76,6 +102,13 @@ spec:
       securityContext: {}
       terminationGracePeriodSeconds: 30
       volumes:
+      - name: gpg
+        secret:
+          defaultMode: 0400
+          secretName: sfa-dash-gpg-secret
+      - name: gpghome
+        emptyDir:
+          defaultMode: 0700
       - name: metrics
         emptyDir: {}
       - name: cert-secret
@@ -88,6 +121,7 @@ spec:
       automatic: true
       containerNames:
       - sfa-dash
+      - setupgpg
       from:
         kind: ImageStreamTag
         name: sfa-dash:{{ dash_image_tag | default('latest') }}
