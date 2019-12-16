@@ -53,6 +53,15 @@ def to_json(value):
     return json.dumps(value)
 
 
+def to_env_file(value):
+    out = ''
+    for k, v in value.items():
+        if isinstance(v, str):
+            v = '"{}"'.format(v)
+        out += '{k}={v}\n'.format(k=k, v=v)
+    return ensure_str(out)
+
+
 def random_constructor(loader, node):
     value = loader.construct_scalar(node)
     return random_digit_string(int(value))
@@ -151,6 +160,7 @@ def render_templates(args):
 
     env.filters['b64encode'] = b64encode
     env.filters['to_json'] = to_json
+    env.filters['to_env_file'] = to_env_file
 
     if recurse:
         all_templates = env.list_templates(

@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: sfa-api-job-config
+  namespace: {{ namespace }}
+data:
+  job-config.py: {{ job_config | to_env_file | b64encode }}
+    

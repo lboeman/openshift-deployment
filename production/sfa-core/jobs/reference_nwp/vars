@@ -1,4 +1,0 @@
-namespace: production
-image_tag: stable
-base_url: https://api.solarforecastarbiter.org
-schedule: '50 * * * *'

@@ -47,7 +47,11 @@ spec:
             #! /bin/bash
             MYSQL_PWD=$MYSQL_ROOT_PASSWORD mysql -S /tmp/mysql.sock -u root -e "ALTER USER 'apiuser'@'%' IDENTIFIED BY '$ALTER_USER_PASSWORD'"
             MYSQL_PWD=$MYSQL_ROOT_PASSWORD mysql -S /tmp/mysql.sock -u root -e "ALTER USER 'frameworkadmin'@'%' IDENTIFIED BY '$ALTER_ADMINUSER_PASSWORD'"
+            MYSQL_PWD=$MYSQL_ROOT_PASSWORD mysql -S /tmp/mysql.sock -u root -e "ALTER USER 'job_executor'@'%' IDENTIFIED BY '$ALTER_JOBUSER_PASSWORD'"
             EOF
+            cat <<\EOF > 2_setup_jobs.sh
+            #! /bin/bash
+            MYSQL_PWD=$MYSQL_ROOT_PASSWORD mysql -S /tmp/mysql.sock -u root --database=arbiter_data -e "INSERT INTO arbiter_data.job_tokens (id, token) SELECT id, '$REFERENCE_REFRESH_TOKEN' FROM arbiter_data.users WHERE auth0_id = 'auth0|5cc8aeff0ec8b510a4c7f2f1'"
       containers:
       - env:
         - name: MYSQL_ROOT_PASSWORD
@@ -69,6 +73,16 @@ spec:
           valueFrom:
             secretKeyRef:
               key: alter-adminuser-password
+              name: mysql
+        - name: ALTER_JOBUSER_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: alter-jobuser-password
+              name: mysql
+        - name: REFERENCE_REFRESH_TOKEN
+          valueFrom:
+            secretKeyRef:
+              key: reference-refresh-token
               name: mysql
         image: percona:8.0.13-4-centos
         imagePullPolicy: IfNotPresent

@@ -3,3 +3,5 @@ mysql_root_password: !ssm /okd/development/mysql/root_password
 mysql_database_name: arbiter_data
 alter_user_password: !ssm /okd/development/sfa-api/mysql_password
 alter_adminuser_password: !ssm /okd/development/sfa-api/adminmysql_password
+alter_jobuser_password: !ssm /okd/development/sfa-api/jobuser_mysql_password
+reference_refresh_token: !ssm /okd/development/sfa-api/reference_refresh_token

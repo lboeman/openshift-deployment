@@ -2,19 +2,37 @@ namespace: production
 sfa_api_route: api.solarforecastarbiter.org
 sfa_api_image_tag: stable
 redoc_version: v2.0.0-rc.8
-mysql_host: !ssm /okd/production/sfa-api/mysql_host
-mysql_port: '3306'
+mysql_host: &mysqlhost !ssm /okd/production/sfa-api/mysql_host
+mysql_port: &mysqlport '3306'
 mysql_user: !ssm /okd/production/sfa-api/mysql_user
 mysql_password: !ssm /okd/production/sfa-api/mysql_password
-mysql_database: arbiter_data
-auth0_client_id: !ssm /okd/production/sfa-api/auth0_client_id
-auth0_client_secret: !ssm /okd/production/sfa-api/auth0_client_secret
+mysql_database: &mysqldb arbiter_data
+auth0_client_id: &clientid !ssm /okd/production/sfa-api/auth0_client_id
+auth0_client_secret: &clientsecret !ssm /okd/production/sfa-api/auth0_client_secret
 sentry_dsn: !ssm /okd/sentry/apidsn
-redis_auth: !ssm /okd/production/sfa-api/redis_auth
-redis_host: api-redis.production.svc
+redis_auth: &redispw !ssm /okd/production/sfa-api/redis_auth
+redis_host: &redishost api-redis.production.svc
 redis_config: |
   REDIS_PORT = 6380
   REDIS_DB = 0
   REDIS_USE_SSL = True
   LOG_LEVEL = 'INFO'
   QUEUES = ['default', 'reports']
+job_config:
+  REDIS_HOST: *redishost
+  REDIS_PORT: 6380
+  REDIS_DB: 2
+  REDIS_USE_SSL: 1
+  REDIS_PASSWORD: *redispw
+  AUTH0_CLIENT_ID: *clientid
+  AUTH0_CLIENT_SECRET: *clientsecret
+  AUTH0_BASE_URL: https://solarforecastarbiter.auth0.com
+  AUTH0_AUDIENCE: https://api.solarforecastarbiter.org
+  MYSQL_HOST: *mysqlhost
+  MYSQL_PORT: *mysqlport
+  MYSQL_USER: job_executor
+  MYSQL_PASSWORD: !ssm /okd/production/sfa-api/jobuser_mysql_password
+  MYSQL_DATABASE: *mysqldb
+  LOG_LEVEL: INFO
+  SCHEDULER_QUEUE: scheduled_jobs
+  TOKEN_ENCRYPTION_KEY: !ssm /okd/production/sfa-api/refresh_token_key
