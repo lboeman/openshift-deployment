@@ -83,7 +83,7 @@ RUN set -ex \
 
 # link gpgme python package to virtual env
 # install wgrib2
-# install pandoc
+# install phantomjs
 # chown things
 RUN set -ex \
     && export PYTHON_MAJOR_VER="$(python -V | awk '{print $2}' | cut -d. -f-2)" \
@@ -93,9 +93,11 @@ RUN set -ex \
     && yum install -y --setopt=tsflags=nodocs wgrib2 \
     && yum clean all \
     && rm -rf /var/cache/yum \
-    && wget -q -P /tmp https://github.com/jgm/pandoc/releases/download/2.7.3/pandoc-2.7.3-linux.tar.gz \
-    && tar xvzf /tmp/pandoc-2.7.3-linux.tar.gz --strip-components 1 -C /opt/app-root  \
-    && rm -f /tmp/pandoc-2.7.3-linux.tar.gz \
+    && wget -q -O phantomjs.tar.bz2 https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-linux-x86_64.tar.bz2 \
+    && mkdir phantomjs \
+    && tar -xjC ./phantomjs --strip-components=1 -f phantomjs.tar.bz2 \
+    && cp phantomjs/bin/phantomjs /opt/app-root/bin/. \
+    && rm -r phantomjs phantomjs.tar.bz2 \
     && chown -R 1001:0 ${APP_ROOT} \
     && fix-permissions ${APP_ROOT} -P \
     && mkdir /data \
