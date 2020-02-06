@@ -12,7 +12,7 @@ fi
 
 if [[ -f requirements.txt ]]; then
   echo "---> Installing dependencies ..."
-  pip install -r requirements.txt
+  pip install -r requirements.txt --upgrade-strategy only-if-needed
 fi
 
 if [[ -f setup.py ]]; then
