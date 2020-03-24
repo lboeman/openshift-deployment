@@ -41,6 +41,8 @@ spec:
           name: job-config
         - mountPath: /data
           name: data
+        - mountPath: /opt/app-root/src/.plotly
+          name: orca-config
       dnsPolicy: ClusterFirst
       restartPolicy: Always
       schedulerName: default-scheduler
@@ -54,6 +56,9 @@ spec:
         secret:
           defaultMode: 420
           secretName: sfa-api-job-config
+      - name: orca-config
+        configMap:
+          name: orca-config
   test: false
   triggers:
   - imageChangeParams:

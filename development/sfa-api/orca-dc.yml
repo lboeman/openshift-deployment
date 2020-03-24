@@ -1,0 +1,70 @@
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  annotations: {}
+  generation: 1
+  labels:
+    app: sfa-api
+  name: orca
+  namespace: {{ namespace }}
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  selector:
+    deploymentconfig: orca
+  strategy:
+    activeDeadlineSeconds: 21600
+    resources: {}
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: sfa-api
+        deploymentconfig: orca
+    spec:
+      containers:
+      - image: quay.io/plotly/image-exporter:v1.3.0
+        imagePullPolicy: Always
+        name: orca
+        args: ["--plotlyJS", "https://plot.ly/static/plotlyjs/build/plotlyjs-bundle.js", "--port", "9091"]
+        env:
+          - name: PLOTLY_IMAGESERVER_ENABLE_MONIT
+            value: "false"
+        resources:
+         limits:
+           memory: 2396Mi
+         requests:
+           cpu: 100m
+           memory: 1Gi
+        ports:
+        - name: http-server
+          containerPort: 9091
+        livenessProbe:
+          httpGet:
+            path: /ping
+            port: 9091
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          exec:
+            command:
+            - cat
+            - /var/run/xvfb.pid
+          failureThreshold: 1
+          initialDelaySeconds: 20
+          periodSeconds: 1
+          successThreshold: 1
+          timeoutSeconds: 1
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext:
+        runAsUser: 0
+      serviceAccountName: orca
+      terminationGracePeriodSeconds: 120
+  triggers:
+  - type: ConfigChange

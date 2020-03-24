@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: orca-config
+  namespace: {{ namespace }}
+data:
+  .orca: |
+    {
+        "default_format": "pdf",
+        "server_url": "http://orca.{{ namespace }}.svc:9091"
+    }

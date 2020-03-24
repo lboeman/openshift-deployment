@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations: {}
+  labels:
+    app: sfa-api
+  name: orca
+  namespace: {{ namespace }}
+spec:
+  ports:
+  - name: 9091-tcp
+    port: 9091
+    protocol: TCP
+    targetPort: 9091
+  selector:
+    deploymentconfig: orca
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}
