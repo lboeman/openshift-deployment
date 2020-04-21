@@ -31,6 +31,18 @@ spec:
                       key: sandia-api-key
                       name: reference-data
                 {% endif -%}
+                {% if network == 'doe arm' %}
+                - name: DOE_ARM_API_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      key: arm-api-key
+                      name: reference-data
+                - name: DOE_ARM_USER_ID
+                  valueFrom:
+                    secretKeyRef:
+                      key: arm-api-user
+                      name: reference-data
+                {% endif %}
                 - name: SFA_API_USER
                   valueFrom:
                     secretKeyRef:

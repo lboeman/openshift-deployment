@@ -7,3 +7,5 @@ api_user: reference@solarforecastarbiter.org
 api_password: !ssm /okd/development/sfa-core/reference_user_password
 sentry_dsn: !ssm /okd/sentry/coredsn
 sandia_api_key: !ssm sandia-api-key
+arm_api_key: !ssm arm_api_key
+arm_api_user: !ssm arm_api_user
