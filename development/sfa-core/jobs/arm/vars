@@ -1,7 +1,7 @@
 namespace: development
 image_tag: latest
 network: doe arm
-schedule: '0 1 * * *'
+schedule: '15 2 * * *'
 base_url: https://dev-api.solarforecastarbiter.org
 start: '$today 0 - 2 day'
 end: '$today 2'
