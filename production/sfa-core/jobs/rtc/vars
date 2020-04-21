@@ -3,5 +3,4 @@ image_tag: stable
 network: doe rtc
 schedule: '0 1 * * *'
 base_url: https://api.solarforecastarbiter.org
-start: '$today 0 - 2 day'
 end: '$today 1'

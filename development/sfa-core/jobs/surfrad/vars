@@ -3,6 +3,5 @@ image_tag: latest
 network: noaa surfrad
 schedule: '30 1 * * *'
 base_url: https://dev-api.solarforecastarbiter.org
-start: '$today 0 - 3 day'
 end: '$today 2'
 

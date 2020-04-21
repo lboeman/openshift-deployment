@@ -3,5 +3,4 @@ image_tag: latest
 network: nrel midc
 schedule: '45 1 * * *'
 base_url: https://dev-api.solarforecastarbiter.org
-start: '$today 0 - 1 day'
 end: '$today 2'

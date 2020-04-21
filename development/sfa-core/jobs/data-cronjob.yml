@@ -22,7 +22,7 @@ spec:
               command:
                 - sh
                 - -c
-                - solararbiter referencedata update -v --base-url="{{ base_url }}" --network "{{ network.upper() }}" $(date -d "{{ start }}" -uIs) $(date -d "{{ end }}" -uIs)
+                - solararbiter referencedata update -v --base-url="{{ base_url }}" --network "{{ network.upper() }}" --end $(date -d "{{ end }}" -uIs)
               env:
                 {% if  network == 'doe rtc' -%}
                 - name: DOE_RTC_API_KEY

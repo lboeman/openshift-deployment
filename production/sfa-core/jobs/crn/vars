@@ -3,6 +3,5 @@ image_tag: stable
 network: noaa uscrn
 schedule: '0 3 * * *'
 base_url: https://api.solarforecastarbiter.org
-start: '$today 0 - 1 day'
 end: '$today 3'
 
