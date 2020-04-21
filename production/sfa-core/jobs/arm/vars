@@ -4,4 +4,4 @@ network: doe arm
 schedule: '15 2 * * *'
 base_url: https://api.solarforecastarbiter.org
 start: '$today 0 - 2 day'
-end: '$today 1'
+end: '$today 2'
